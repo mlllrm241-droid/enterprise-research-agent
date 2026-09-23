@@ -1,0 +1,12 @@
+.env
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+*.pyc
+workspace/
+data/chroma/
+knowledge/manifest.json
+memory/profiles/
+data/memory_chroma/
+/data/checkpoints.sqlite*

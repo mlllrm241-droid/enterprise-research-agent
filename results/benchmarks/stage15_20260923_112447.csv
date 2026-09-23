@@ -1,0 +1,2 @@
+﻿case_id,category,system,status,review_status,use_harness,delivery_success,strict_task_success,todo_completion_rate,citation_validity,knowledge_evidence_usage,routing_precision,routing_recall,routing_f1,reviewer_passed,llm_judge_quality,judge_error,model_limit_failures,total_errors,latency_seconds
+company_01,company,baseline,completed,,,1.0,,,,,,,,,,,,0,53.2

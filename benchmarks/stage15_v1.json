@@ -1,0 +1,166 @@
+[
+  {
+    "case_id": "company_01",
+    "category": "company",
+    "query": "请研究 NVIDIA 当前主要企业 AI 产品，包括数据中心 GPU、DGX、NVIDIA AI Enterprise 和 NIM，并保留重要事实的 Source ID。",
+    "expected_agents": ["company"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "company_02",
+    "category": "company",
+    "query": "请研究 AMD 当前面向企业 AI 的主要产品与软件平台，包括 Instinct、ROCm 和企业部署方案。",
+    "expected_agents": ["company"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "company_03",
+    "category": "company",
+    "query": "请研究 AWS 在生成式 AI 基础设施方面的主要产品，包括 Trainium、Inferentia 和 Bedrock，并分析其企业定位。",
+    "expected_agents": ["company"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "company_04",
+    "category": "company",
+    "query": "请研究 Google Cloud 在企业生成式 AI 市场中的主要产品，包括 TPU、Vertex AI 和 Gemini 企业服务。",
+    "expected_agents": ["company"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+
+  {
+    "case_id": "market_01",
+    "category": "market",
+    "query": "请比较 NVIDIA、AMD、Google 和 AWS 在企业 AI 基础设施市场中的主要竞争方向。",
+    "expected_agents": ["market"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "market_02",
+    "category": "market",
+    "query": "请分析 CUDA 与 ROCm 在企业 AI 软件生态中的竞争格局，包括框架、工具链和迁移成本。",
+    "expected_agents": ["market"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "market_03",
+    "category": "market",
+    "query": "请研究主要云厂商自研 AI 芯片对 NVIDIA 数据中心 GPU 业务形成的竞争压力。",
+    "expected_agents": ["market"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "market_04",
+    "category": "market",
+    "query": "请分析企业大模型推理基础设施市场中 NVIDIA 与 AMD 的主要竞争维度。",
+    "expected_agents": ["market"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+
+  {
+    "case_id": "finance_01",
+    "category": "finance",
+    "query": "请分析 NVIDIA 最近财年的营收、净利润和数据中心业务收入，并计算主要同比增长率。",
+    "expected_agents": ["finance"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "finance_02",
+    "category": "finance",
+    "query": "请研究 AMD 最近财年的营收与数据中心业务表现，并分析其 AI 业务增长情况。",
+    "expected_agents": ["finance"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "finance_03",
+    "category": "finance",
+    "query": "请比较 NVIDIA 与 AMD 最近财年的数据中心业务规模和增长趋势。",
+    "expected_agents": ["finance"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "finance_04",
+    "category": "finance",
+    "query": "请分析 NVIDIA 企业 AI 软件与硬件业务可能涉及的主要收入来源和盈利驱动因素。",
+    "expected_agents": ["finance"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+
+  {
+    "case_id": "risk_01",
+    "category": "risk",
+    "query": "请根据内部 AI Supplier Assessment Standard 评估 NVIDIA 的技术依赖风险和供应链风险，并保留 Knowledge Evidence ID。",
+    "expected_agents": ["risk"],
+    "requires_sources": true,
+    "requires_knowledge": true
+  },
+  {
+    "case_id": "risk_02",
+    "category": "risk",
+    "query": "请根据内部供应商评估标准分析采用 AMD ROCm 作为企业 AI 平台可能面临的技术和业务连续性风险。",
+    "expected_agents": ["risk"],
+    "requires_sources": true,
+    "requires_knowledge": true
+  },
+  {
+    "case_id": "risk_03",
+    "category": "risk",
+    "query": "请评估企业高度依赖 CUDA 生态可能形成的供应商锁定和业务连续性风险，并参考内部知识库。",
+    "expected_agents": ["risk"],
+    "requires_sources": true,
+    "requires_knowledge": true
+  },
+  {
+    "case_id": "risk_04",
+    "category": "risk",
+    "query": "请从供应链、软件生态和云平台依赖三个角度评估企业部署生成式 AI 基础设施的主要风险，并参考内部知识。",
+    "expected_agents": ["risk"],
+    "requires_sources": true,
+    "requires_knowledge": true
+  },
+
+  {
+    "case_id": "general_01",
+    "category": "general",
+    "query": "请为一家计划部署企业大模型推理平台的公司比较 NVIDIA CUDA 与 AMD ROCm，并形成技术选型研究报告。",
+    "expected_agents": ["general"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "general_02",
+    "category": "general",
+    "query": "请研究企业建设私有生成式 AI 平台时需要考虑的硬件、软件、成本和风险因素。",
+    "expected_agents": ["general"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "general_03",
+    "category": "general",
+    "query": "请研究企业部署大模型推理服务时，自建 GPU 集群与公有云 GPU 服务的主要差异。",
+    "expected_agents": ["general"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  },
+  {
+    "case_id": "general_04",
+    "category": "general",
+    "query": "请为企业 AI 基础设施采购制定一份研究框架，覆盖产品、竞争、财务、技术和风险维度。",
+    "expected_agents": ["general"],
+    "requires_sources": true,
+    "requires_knowledge": false
+  }
+]
