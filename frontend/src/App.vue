@@ -1,5 +1,10 @@
 <script setup>
-import { computed, onUnmounted, ref } from "vue"
+import {
+  computed,
+  onMounted,
+  onUnmounted,
+  ref,
+} from "vue"
 
 import {
   createResearchEventSource,
@@ -9,9 +14,22 @@ import {
   submitHumanReview,
 } from "./api/research"
 
+import heroImage from "./assets/hero.png"
 
-const query = ref("")
-const taskId = ref("")
+
+const TASK_ID_STORAGE_KEY = (
+  "enterprise-research-agent.task-id"
+)
+const QUERY_STORAGE_KEY = (
+  "enterprise-research-agent.query"
+)
+
+const query = ref(
+  localStorage.getItem(QUERY_STORAGE_KEY) || ""
+)
+const taskId = ref(
+  localStorage.getItem(TASK_ID_STORAGE_KEY) || ""
+)
 const task = ref(null)
 const report = ref("")
 const feedback = ref("")
@@ -90,6 +108,15 @@ async function startResearch() {
     )
 
     taskId.value = result.task_id
+
+    localStorage.setItem(
+      TASK_ID_STORAGE_KEY,
+      taskId.value
+    )
+    localStorage.setItem(
+      QUERY_STORAGE_KEY,
+      query.value.trim()
+    )
 
     // =========================================
     // 4. 获取初始状态
@@ -277,19 +304,37 @@ async function loadReport() {
 }
 
 
-function getTodoSymbol(status) {
-  // =========================================
-  // 1. 映射 Todo 状态
-  // =========================================
-  const symbols = {
-    pending: "○",
-    running: "◉",
-    completed: "✓",
-    failed: "×",
+onMounted(async () => {
+  if (!taskId.value) {
+    return
   }
 
-  return symbols[status] || "○"
-}
+  loading.value = true
+
+  try {
+    await refreshTask()
+
+    if (
+      [
+        "completed",
+        "completed_with_warnings",
+      ].includes(task.value?.status)
+    ) {
+      await loadReport()
+    } else if (
+      !isFinished.value
+      && !isWaitingHuman.value
+    ) {
+      connectEvents()
+    }
+  } catch (error) {
+    errorMessage.value = (
+      `恢复上次任务失败：${error.message}`
+    )
+  } finally {
+    loading.value = false
+  }
+})
 
 
 onUnmounted(() => {
@@ -303,13 +348,20 @@ onUnmounted(() => {
     <header class="header">
       <div>
         <div class="brand">
-          Enterprise Research Agent
+          Enterprise Research
+          <span>Agent</span>
+          <i>✦</i>
         </div>
-
         <p class="subtitle">
           AI-powered enterprise research workspace
         </p>
       </div>
+
+      <img
+        class="header-mascot"
+        :src="heroImage"
+        alt="AI research assistant"
+      />
 
       <div
         class="connection"
@@ -320,18 +372,24 @@ onUnmounted(() => {
       </div>
     </header>
 
-
     <section class="hero card">
-      <label class="label">
+      <div class="label label-with-icon">
+        <span class="label-icon">▣</span>
         Research Task
-      </label>
+      </div>
 
-      <textarea
-        v-model="query"
-        class="query-input"
-        placeholder="例如：请分析 NVIDIA 与 AMD 在企业 AI 推理市场中的竞争格局，并保留重要事实的 Source ID。"
-        :disabled="loading"
-      />
+      <div class="query-wrap">
+        <textarea
+          v-model="query"
+          class="query-input"
+          maxlength="1000"
+          placeholder="例如：请分析 NVIDIA 与 AMD 在企业 AI 推理市场中的竞争格局，并保留重要事实的 Source ID。"
+          :disabled="loading"
+        />
+        <span class="character-count">
+          {{ query.length }}/1000
+        </span>
+      </div>
 
       <div class="actions">
         <button
@@ -339,120 +397,107 @@ onUnmounted(() => {
           :disabled="loading"
           @click="startResearch"
         >
+          <span class="play-icon">▶</span>
           {{ loading ? "Processing..." : "Start Research" }}
         </button>
 
-        <span
-          v-if="taskId"
-          class="task-id"
-        >
+        <span v-if="taskId" class="task-id">
           Task {{ taskId }}
         </span>
       </div>
 
-      <div
-        v-if="errorMessage"
-        class="error-box"
-      >
+      <div v-if="errorMessage" class="error-box">
         {{ errorMessage }}
       </div>
     </section>
 
-
-    <section
-      v-if="task"
-      class="dashboard"
-    >
+    <section v-if="task" class="dashboard">
       <div class="main-column">
         <section class="card status-card">
           <div class="section-header">
-            <div>
-              <div class="label">
-                Current Status
+            <div class="section-title">
+              <span class="section-icon status-icon">⌁</span>
+              <div>
+                <div class="label">Current Status</div>
+                <h2>{{ task.current_step || task.status }}</h2>
               </div>
-
-              <h2>
-                {{ task.current_step || task.status }}
-              </h2>
             </div>
 
-            <span
-              class="status-badge"
-              :class="task.status"
-            >
+            <span class="status-badge" :class="task.status">
+              <span class="badge-spinner"></span>
               {{ task.status }}
             </span>
           </div>
 
-          <div class="progress-track">
-            <div
-              class="progress-value"
-              :style="{
-                width: `${progressPercent}%`
-              }"
-            />
+          <div class="progress-line">
+            <div class="progress-track">
+              <div
+                class="progress-value"
+                :style="{ width: `${progressPercent}%` }"
+              />
+            </div>
+            <strong>{{ progressPercent }}%</strong>
           </div>
 
           <div class="metrics">
-            <div>
-              <span>Progress</span>
-              <strong>
-                {{ progressPercent }}%
-              </strong>
+            <div class="metric-card">
+              <span class="metric-icon blue">▥</span>
+              <div>
+                <span>Progress</span>
+                <strong>{{ progressPercent }}%</strong>
+              </div>
             </div>
 
-            <div>
-              <span>Current Agent</span>
-              <strong>
-                {{ task.current_agent || "-" }}
-              </strong>
+            <div class="metric-card">
+              <span class="metric-icon teal">●</span>
+              <div>
+                <span>Current Agent</span>
+                <strong>{{ task.current_agent || "-" }}</strong>
+              </div>
             </div>
 
-            <div>
-              <span>Reviewer</span>
-              <strong>
-                {{ task.review_status || "-" }}
-              </strong>
+            <div class="metric-card">
+              <span class="metric-icon purple">♟</span>
+              <div>
+                <span>Reviewer</span>
+                <strong>{{ task.review_status || "-" }}</strong>
+              </div>
             </div>
           </div>
         </section>
 
-
-        <section class="card">
+        <section class="card plan-card">
           <div class="section-header">
-            <div>
-              <div class="label">
-                Research Plan
+            <div class="section-title">
+              <span class="section-icon plan-icon">✓</span>
+              <div>
+                <div class="label">Research Plan</div>
+                <h2>Todos</h2>
               </div>
-
-              <h2>Todos</h2>
             </div>
-
             <span class="todo-count">
-              {{ completedTodos }}
-              /
-              {{ task.todos?.length || 0 }}
+              {{ completedTodos }} / {{ task.todos?.length || 0 }}
             </span>
           </div>
 
           <div class="todo-list">
             <div
-              v-for="todo in task.todos"
+              v-for="(todo, index) in task.todos"
               :key="todo.id"
               class="todo-item"
               :class="todo.status"
             >
-              <div
-                class="todo-symbol"
-              >
-                {{ getTodoSymbol(todo.status) }}
+              <span class="timeline-dot"></span>
+              <div class="todo-symbol">
+                {{
+                  todo.status === "completed"
+                    ? "✓"
+                    : index + 1
+                }}
               </div>
 
               <div class="todo-content">
-                <strong>
-                  {{ todo.id }} · {{ todo.title }}
-                </strong>
-
+                <strong>{{ todo.id }} · {{ todo.title }}</strong>
                 <span>
                   {{
                     todo.assigned_agent
@@ -461,108 +506,50 @@ onUnmounted(() => {
                   }}
                 </span>
               </div>
+
+              <span class="todo-action">
+                {{ todo.status === "running" ? "◎" : "◇" }}
+              </span>
             </div>
           </div>
         </section>
 
-
-        <section
-          v-if="report"
-          class="card report-card"
-        >
-          <div class="section-header">
+        <section v-if="report" class="card report-card">
+          <div class="section-title">
+            <span class="section-icon report-icon">▤</span>
             <div>
-              <div class="label">
-                Final Artifact
-              </div>
-
+              <div class="label">Final Artifact</div>
               <h2>Research Report</h2>
             </div>
           </div>
-
           <pre class="report">{{ report }}</pre>
         </section>
       </div>
 
-
       <aside class="side-column">
-        <section
-          v-if="isWaitingHuman"
-          class="card review-card"
-        >
-          <div class="label">
-            Human In The Loop
-          </div>
-
-          <h2>Review Required</h2>
-
-          <p>
-            Reviewer 已完成自动审核，请决定是否接受当前报告。
-          </p>
-
-          <textarea
-            v-model="feedback"
-            class="feedback-input"
-            placeholder="需要修改时，在这里填写反馈..."
-          />
-
-          <button
-            class="approve-button"
-            :disabled="loading"
-            @click="handleReview('approve')"
-          >
-            Approve
-          </button>
-
-          <button
-            class="revise-button"
-            :disabled="loading"
-            @click="handleReview('revise')"
-          >
-            Revise
-          </button>
-
-          <button
-            class="reject-button"
-            :disabled="loading"
-            @click="handleReview('reject')"
-          >
-            Reject
-          </button>
-        </section>
-
-
         <section class="card details-card">
-          <div class="label">
-            Runtime
+          <div class="section-title compact">
+            <span class="section-icon runtime-icon">⚙</span>
+            <div class="label">Runtime</div>
           </div>
 
           <div class="detail-row">
-            <span>Status</span>
-            <strong>
-              {{ task.status }}
+            <span><i>◇</i>Status</span>
+            <strong class="detail-status">
+              <b></b>{{ task.status }}
             </strong>
           </div>
-
           <div class="detail-row">
-            <span>Step</span>
-            <strong>
-              {{ task.current_step || "-" }}
-            </strong>
+            <span><i>▱</i>Step</span>
+            <strong>{{ task.current_step || "-" }}</strong>
           </div>
-
           <div class="detail-row">
-            <span>Todo</span>
-            <strong>
-              {{ task.current_todo_id || "-" }}
-            </strong>
+            <span><i>▤</i>Todo</span>
+            <strong>{{ task.current_todo_id || "-" }}</strong>
           </div>
-
           <div class="detail-row">
-            <span>Human Review</span>
-            <strong>
-              {{ task.human_review_status || "-" }}
-            </strong>
+            <span><i>♟</i>Human Review</span>
+            <strong>{{ task.human_review_status || "-" }}</strong>
           </div>
 
           <button
@@ -574,40 +561,56 @@ onUnmounted(() => {
           </button>
         </section>
 
+        <section v-if="isWaitingHuman" class="card review-card">
+          <div class="label">Human In The Loop</div>
+          <h2>Review Required</h2>
+          <p>自动审查已完成，请决定是否接受当前报告。</p>
 
-        <section
-          v-if="task.errors?.length"
-          class="card error-card"
-        >
-          <div class="label">
-            Errors
-          </div>
+          <textarea
+            v-model="feedback"
+            class="feedback-input"
+            placeholder="需要修改时，在这里填写反馈..."
+          />
 
+          <button
+            class="approve-button"
+            :disabled="loading"
+            @click="handleReview('approve')"
+          >Approve</button>
+          <button
+            class="revise-button"
+            :disabled="loading"
+            @click="handleReview('revise')"
+          >Revise</button>
+          <button
+            class="reject-button"
+            :disabled="loading"
+            @click="handleReview('reject')"
+          >Reject</button>
+        </section>
+
+        <div class="mascot-stage" aria-hidden="true">
+          <span class="sparkle one">✦</span>
+          <span class="sparkle two">✧</span>
+          <img :src="heroImage" alt="" />
+        </div>
+
+        <section v-if="task.errors?.length" class="card error-card">
+          <div class="label">Errors</div>
           <div
             v-for="item in task.errors"
             :key="item"
             class="runtime-message"
-          >
-            {{ item }}
-          </div>
+          >{{ item }}</div>
         </section>
 
-
-        <section
-          v-if="task.warnings?.length"
-          class="card warning-card"
-        >
-          <div class="label">
-            Warnings
-          </div>
-
+        <section v-if="task.warnings?.length" class="card warning-card">
+          <div class="label">Warnings</div>
           <div
             v-for="item in task.warnings"
             :key="item"
             class="runtime-message"
-          >
-            {{ item }}
-          </div>
+          >{{ item }}</div>
         </section>
       </aside>
     </section>

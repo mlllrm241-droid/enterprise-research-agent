@@ -1,5 +1,8 @@
 from contextlib import asynccontextmanager
 
+import os
+
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
 from app.api.routes.health import router as health_router
@@ -45,6 +48,22 @@ app = FastAPI(
     title="Enterprise Research Agent API",
     version="0.13.0",
     lifespan=lifespan,
+)
+
+cors_origins = [
+    origin.strip()
+    for origin in os.getenv(
+        "CORS_ORIGINS",
+        "http://localhost:5173",
+    ).split(",")
+    if origin.strip()
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=cors_origins,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 app.include_router(

@@ -7,3 +7,15 @@ market_01,market,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,,0.0,0.0,0.
 market_02,market,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,0,1,900.0
 market_03,market,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,0,1,900.0
 market_04,market,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,0,1,900.0
+finance_01,finance,full_no_harness,completed_with_warnings,exhausted,False,False,1.0,0.0,1.0,0.0,,1.0,1.0,1.0,0.0,,,0,0,585.05
+finance_02,finance,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,0,1,900.0
+finance_03,finance,full_no_harness,completed_with_warnings,exhausted,False,False,1.0,0.0,1.0,0.0,,0.5,1.0,0.6666666666666666,0.0,,,0,0,698.85
+finance_04,finance,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,0,1,900.0
+risk_01,risk,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,0,1,900.0
+risk_02,risk,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,0,1,900.0
+risk_03,risk,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,,,0,1,900.0
+risk_04,risk,full_no_harness,completed,passed,False,False,1.0,1.0,1.0,0.0,1.0,1.0,1.0,1.0,1.0,,,0,0,465.86
+general_01,general,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,0,1,900.0
+general_02,general,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,0,1,900.0
+general_03,general,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,0,1,900.0
+general_04,general,full_no_harness,timeout,,False,True,0.0,0.0,0.0,0.0,,0.0,0.0,0.0,0.0,,,0,1,900.0

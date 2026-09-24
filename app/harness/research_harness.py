@@ -10,12 +10,22 @@ from langchain.agents.middleware import (
 
 from app.schemas.subagent_route import AgentType
 
+####        V1
+# HARNESS_LIMITS = {
+#     "company": {"tool_calls": 8, "model_calls": 10},
+#     "market": {"tool_calls": 8, "model_calls": 10},
+#     "finance": {"tool_calls": 6, "model_calls": 8},
+#     "risk": {"tool_calls": 10, "model_calls": 12},
+#     "general": {"tool_calls": 8, "model_calls": 10},
+# }
+
+####        V2
 HARNESS_LIMITS = {
-    "company": {"tool_calls": 8, "model_calls": 10},
-    "market": {"tool_calls": 8, "model_calls": 10},
-    "finance": {"tool_calls": 6, "model_calls": 8},
-    "risk": {"tool_calls": 10, "model_calls": 12},
-    "general": {"tool_calls": 8, "model_calls": 10},
+    "company": {"tool_calls": 8, "model_calls": 16},
+    "market": {"tool_calls": 8, "model_calls": 16},
+    "finance": {"tool_calls": 6, "model_calls": 14},
+    "risk": {"tool_calls": 10, "model_calls": 20},
+    "general": {"tool_calls": 8, "model_calls": 16},
 }
 
 
